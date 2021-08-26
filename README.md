@@ -30,6 +30,7 @@ Repository for Thor Cryptography project
 							^
 ```
 ---------------------------------------------------------TEAM----------------------------------------------------------
+
 Faculty Sponsors:
 Florida Institute of Technology
 Dr. Bhattacharyya, College of Engineering and Computing
@@ -43,5 +44,6 @@ Luke Bonenberger
 Jared Blanco
 
 --------------------------------------------------------VISION---------------------------------------------------------
+
 Using data captured from atmospheric lightning, generate uniquely high entropy keys for encryption.
 
