@@ -1,5 +1,5 @@
 # Access Live Website
-### [Link](https://killjaqular.github.io/thor/ "Link")
+### [https://killjaqular.github.io/thor/](https://killjaqular.github.io/thor/ "https://killjaqular.github.io/thor/")
 
 ---------------------
 ## Documentation for project
