@@ -250,3 +250,22 @@ hint: 'git pull ...') before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
 
+----------
+
+Mon Sep 06 2021 22:37:00 GMT-0400 (Eastern Daylight Time)
+
+To https://github.com/killjaqular/thor.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'https://github.com/killjaqular/thor.git'
+
+
+----------
+
+Mon Sep 06 2021 22:37:00 GMT-0400 (Eastern Daylight Time)
+
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. Integrate the remote changes (e.g.
+hint: 'git pull ...') before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+
+
