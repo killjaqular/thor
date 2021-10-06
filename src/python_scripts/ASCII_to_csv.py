@@ -30,13 +30,13 @@ from sys import argv, stdout
 
 # <Functions Start>
 def main():
-    if len(argv) != 2:
-        stdout.write(f'USAGE: python3 ASCII_to_cvs.py <some_file.txt>\n')
+    if len(argv) != 3:
+        stdout.write(f'USAGE: python3 ASCII_to_cvs.py <path\\of\\target\\file.txt> <path\\to\\save\\file.csv>\n')
         exit()
 
     try:
         ascii_file = open(argv[1], 'r')
-        csv_file   = open(argv[1][:-3] + 'csv', 'w+')
+        csv_file   = open(argv[2] + '.csv', 'w+')
 
         csv_file.write(ascii_file.read().replace('\t', ','))
 
