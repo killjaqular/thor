@@ -74,7 +74,9 @@ def buildInsertStatement(given_table, given_record):
     return complete_sql_statement
 
 def main():
-    # Verify the program has been given all required arguments
+    ################################
+    # 1. Verify the program has been given all required arguments
+    ################################
     if len(argv) != 2:
         stdout.write(f'USAGE:_> python3 {argv[0]} <file used for credentials>\n')
         stdout.write(f'file used for credentials should look like:\n')
@@ -84,19 +86,66 @@ def main():
         stdout.write(f'database:string for the database name\n')
         exit()
 
+    ################################
+    # 2. Gather credential information
+    ################################
     credentials_file = open(argv[1], 'r')
 
     for line in credentials_file.readlines():
         key, value = line.rstrip().split(':')
         credentials[key] = value
 
+    ################################
+    # 3. Connect to the database and create a cursor to write to database
+    ################################
     connection = mysql.connector.connect(host = credentials['host'],
                                          user = credentials['user'],
                                          password = credentials['password'],
                                          database = credentials['database']
                                          )
+    cursor = connection.cursor()
 
-    create_database(connection, credentials['database'])
+    ################################
+    # 4. Create the database
+    ################################
+    createDatabase(connection, credentials['database'])
+
+    ################################
+    # 5. Read in the csv
+    ################################
+    csv_data = open('Thor.ddl', 'r')
+
+    ################################
+    # 6. Create schema
+    ################################
+    csv_data = csv_data.read()
+    cursor.execute(str(ddl_statement), multi = True)
+
+    ################################
+    # 7. Create individual SQL INSERT statements
+    ################################
+    for line in csv_data.readlines():
+        buildInsertStatement(line)
+
+    ################################
+    # 8. Concatinate all INSERT statements
+    ################################
+
+    ################################
+    # 9. Send all INSERT statements
+    ################################
+
+    ################################
+    # 10. Commit changes
+    ################################
+
+    ################################
+    # 11. Close connection
+    ################################
+
+    ################################
+    # 12. Close cursor
+    ################################
 
 # <Functions End>
 
