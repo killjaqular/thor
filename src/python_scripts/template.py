@@ -1,50 +1,43 @@
 # <Document_Header Start>
 """
-filename : ASCII_to_csv.py # name of this file
+filename : template.py # name of this file
 author : Adonay Pichardo # name of original engineer
-date : 03-OCT-2021 # date of original commit
-
 description :
-Used to automate conversion of ASCII file to a CSV
+"Python Template for all *.py files originally authored for Thor" # description of what was written and summary of function(s), class(es), and object(s)
 """
 # <Document_Header End>
 
 # <Standard Imports Start>
 # List all imports alphabetically for Python3 standard libraries
-from sys import argv, stdout
+import os
 # <Standard Imports End>
+
 
 # <Internal Imports Start>
 # List all imports alphabetically for libraries authored for Thor
+import PD_json
 # <Internal Imports End>
 
 # <External Imports Start>
 # List all imports alphabetically for libraries NOT authored for Thor
+import numpy
 # <External Imports End>
 
 # <Global Objects Start>
+all_global_objects_follow_this_style = {}
 # <Global Objects End>
 
 # <Classes Start>
+class all_classes_follow_this_style:
+    def __init__(self):
+        pass
+        return None
 # <Classes End>
 
 # <Functions Start>
-def main():
-    if len(argv) != 3:
-        stdout.write(f'USAGE: python3 ASCII_to_cvs.py <path\\of\\target\\file.txt> <path\\to\\save\\file.csv>\n')
-        exit()
-
-    try:
-        ascii_file = open(argv[1], 'r')
-        csv_file   = open(argv[2] + '.csv', 'w+')
-
-        csv_file.write(ascii_file.read().replace('\t', ','))
-
-        csv_file.close()
-        ascii_file.close()
-    except Error as error:
-        stdout.write(f'ERROR:_> {error}\n')
-
+def all_functions_follow_this_style():
+    pass
+    return None
 # <Functions End>
 
 if __name__ == "__main__":
