@@ -1,17 +1,20 @@
+CREATE DATABASE IF NOT EXISTS Lightning_Data;
 USE Lightning_Data;
 
-CREATE TABLE lightning_record(
+-- lightning_record
+CREATE TABLE IF NOT EXISTS table1(
     strike_time  datetime,
     nano_seconds int,
     lat          double,
-    lon 		 double,
+    lon          double,
     rise_time    double,
     fall         double,
     peakcurrent  int,
     PRIMARY KEY (strike_time, nano_seconds)
     );
 
-CREATE TABLE lightning_record(
+-- crypt
+CREATE TABLE IF NOT EXISTS table2(
     strike_time   datetime,
     nano_seconds  int,
     generated_key int,

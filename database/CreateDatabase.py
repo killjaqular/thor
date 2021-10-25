@@ -77,13 +77,16 @@ def main():
     ################################
     # 1. Verify the program has been given all required arguments
     ################################
-    if len(argv) != 2:
-        stdout.write(f'USAGE:_> python3 {argv[0]} <file used for credentials>\n')
+    if len(argv) < 3:
+        stdout.write(f'USAGE:_> python3 {argv[0]} <file used for credentials> <file used for ddl> <file with data>1+\n\n')
         stdout.write(f'file used for credentials should look like:\n')
         stdout.write(f'host    :###.###.###.###\n')
         stdout.write(f'user    :string for the username\n')
         stdout.write(f'password:string for the password\n')
-        stdout.write(f'database:string for the database name\n')
+        stdout.write(f'database:string for the database name\n\n')
+        stdout.write(f'file used for ddl should be in valid SQL.\n\n')
+        stdout.write(f'each file with data needs to be a csv file.\n')
+        stdout.write(f'The names of the CSV file must be the name of the table in the database\n')
         exit()
 
     ################################
@@ -108,43 +111,38 @@ def main():
     ################################
     # 4. Create the database
     ################################
-    createDatabase(connection, credentials['database'])
+    # createDatabase(connection, credentials['database'])
 
     ################################
     # 5. Read in the csv
     ################################
-    csv_data = open('Thor.ddl', 'r')
+    cursor.execute(open('Thor.ddl', 'r').read(), multi = True)
+    connection.commit()
 
     ################################
-    # 6. Create schema
+    # 6. Open all CSV files passed in from Command Line Input
     ################################
-    csv_data = csv_data.read()
-    cursor.execute(str(ddl_statement), multi = True)
+    # for every_csv_file in argv[2:]:
+    #     csv_file = open(every_csv_file, 'r')
+    #     all_insertions = '' # All insertions for a CSV file
+    #     for line in csv_file.readlines():
+    #         all_insertions += buildInsertStatement(every_csv_file, line)
+    #         cursor.execute(open(all_insertions, multi = True)
 
     ################################
-    # 7. Create individual SQL INSERT statements
-    ################################
-    for line in csv_data.readlines():
-        buildInsertStatement(line)
-
-    ################################
-    # 8. Concatinate all INSERT statements
-    ################################
-
-    ################################
-    # 9. Send all INSERT statements
+    # 7. Send all INSERT statements
     ################################
 
     ################################
-    # 10. Commit changes
+    # 8. Commit changes
     ################################
 
     ################################
-    # 11. Close connection
+    # 9. Close connection
     ################################
 
     ################################
-    # 12. Close cursor
+    # 10. Close cursor
     ################################
 
 # <Functions End>
