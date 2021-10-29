@@ -113,6 +113,7 @@ def main():
     for line in credentials_file.readlines():
         key, value = line.rstrip().split(':')
         credentials[key] = value
+    credentials['database'], _ = argv[2].split(".")
 
     ################################
     # 3. Connect to the database and create a cursor to write to database
