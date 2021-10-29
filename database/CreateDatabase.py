@@ -93,18 +93,17 @@ def checkCLI(argv):
 def connectToDataBase(credentials):
     return mysql.connector.connect(host     = credentials['host'],
                                    user     = credentials['user'],
-                                   password = credentials['password'],
-                                   database = credentials['database']
+                                   password = credentials['password']
                                    )
 
 def main():
     ################################
-    # 1. Verify the program has been called correctly
+    # Verify the program has been called correctly
     ################################
     checkCLI(argv)
 
     ################################
-    # 2. Gather credential information
+    # Gather credential information
     ################################
     credentials_file = open(argv[1], 'r')
     credentials = {} # Used for authorizing the usage of the database
@@ -116,24 +115,24 @@ def main():
     credentials['database'], _ = argv[2].split(".")
 
     ################################
-    # 3. Connect to the database and create a cursor to write to database
+    # Connect to the database and create a cursor to write to database
     ################################
     connection = connectToDataBase(credentials)
     cursor = connection.cursor()
 
     ################################
-    # 4. Create the database
+    # Create the database
     ################################
     createDatabase(connection, credentials['database'])
 
     ################################
-    # 5. Read in the Data Defining Language csv
+    # Read in the Data Defining Language csv
     ################################
     cursor.execute(open('Thor.ddl', 'r').read(), multi = True)
     connection.commit()
 
     ################################
-    # 6. Open all CSV files passed in from Command Line Input
+    # Open all CSV files passed in from Command Line Input
     ################################
     for every_csv_file in argv[2:]:
         csv_file = open(every_csv_file, 'r')
@@ -146,22 +145,22 @@ def main():
         every_csv_file.close()
 
         ################################
-        # 7. Send all INSERT statements for current CSV file
+        # Send all INSERT statements for current CSV file
         ################################
         cursor.execute(all_insertions, multi = True)
 
         ################################
-        # 8. Commit changes
+        # Commit changes
         ################################
         cursor.commit()
 
     ################################
-    # 9. Close connection
+    # Close connection
     ################################
     connection.close()
 
     ################################
-    # 10. Close cursor
+    # Close cursor
     ################################
     cursor.close()
 

@@ -9,7 +9,7 @@ description :
 
 # <Standard Imports Start>
 # List all imports alphabetically for Python3 standard libraries
-from sys import argv, stdout
+from sys import argv, stdout, stdin
 # <Standard Imports End>
 
 
@@ -56,9 +56,13 @@ def main():
     checkCLI(argv)
 
     ################################
-    # Create the MD5 hash
+    # Create the MD5 hash for every key given
     ################################
-    stdout.write(f'{createMD5hash(argv[1])}\n')
+    while (1):
+        key = stdin.readline().rstrip()
+        if len(key) == 0:
+            break
+        stdout.write(f'{createMD5hash(key)}\n')
 
 if __name__ == "__main__":
     main()
