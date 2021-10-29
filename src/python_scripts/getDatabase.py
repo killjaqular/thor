@@ -9,7 +9,7 @@ description :
 
 # <Standard Imports Start>
 # List all imports alphabetically for Python3 standard libraries
-import mysql
+from sys import argv, stdout
 # <Standard Imports End>
 
 
@@ -20,7 +20,7 @@ import mysql
 
 # <External Imports Start>
 # List all imports alphabetically for libraries NOT authored for Thor
-# NONE
+import mysql.connector
 # <External Imports End>
 
 # <Global Objects Start>
@@ -32,28 +32,91 @@ import mysql
 # <Classes End>
 
 # <Functions Start>
-def getAllData():
-    data = []
+################################
+# Returns entire database
+# INPUT: connection - mysql.connector; Connection to a database that has already been
+#                     authorized.
+#        database   - string; Name of the database to get data from.
+#        tables     - list; A list containing the names of all tables to be retrieved from
+#                     the database
+################################
+def getAllData(connection, database, tables):
+    all_tables = {} # Dictionary to hold all tables
 
     ################################
-    # Open connection to database
+    # Create cursor to send queries
     ################################
+    cursor = connection.cursor()
 
     ################################
-    # Get all rows
+    # Get data from table
     ################################
+    for every_table in tables:
+        data = [] # 2d list of a table's data
+        cursor.execute(f'SELECT * FROM {database}.{every_table};\n')
+        results     = cursor.fetchall()
+        field_names = [each_column[0] for each_column in cursor.description]
+        data.append(field_names)
 
-    ################################
-    # Close connection to database
-    ################################
+        ################################
+        # Step through each row
+        ################################
+        for every_result in results:
+            # Create empty list for the current row
+            row = []
+            ################################
+            # Step through each column
+            ################################
+            for every_value in every_result:
+                # Collect each value in the current row
+                row.append(every_value)
+            # Add the row list into data of the current table
+            data.append(row)
 
-    ################################
-    # Put all data fields of each row into their own list
-    ################################
+        ################################
+        # Insert table and its data into the dictionary
+        ################################
+        all_tables[every_table] = data
 
-    ################################
-    # Insert each row into data
-    ################################
+    cursor.close()
 
-    return data
+    return all_tables
 # <Functions End>
+
+################################
+# Creates connection to the database server with provided credentials
+################################
+def connectToDataBase(credentials):
+    return mysql.connector.connect(host     = credentials['host'],
+                                   user     = credentials['user'],
+                                   password = credentials['password'],
+                                   database = credentials['database']
+                                   )
+
+def main():
+    ################################
+    # Gather credential information
+    ################################
+    credentials_file = open(argv[1], 'r')
+    credentials = {} # Used for authorizing the usage of the database
+
+    # Read in credentialing information
+    for line in credentials_file.readlines():
+        key, value = line.rstrip().split(':')
+        credentials[key] = value
+
+    connection = connectToDataBase(credentials)
+
+    entire_data_base = getAllData(connection,
+                                  "Lightning_Data",
+                                  ["lightning_record"])
+
+    connection.close()
+
+    for key in entire_data_base.keys():
+        stdout.write(f'{key}\n')
+        for table in entire_data_base[key]:
+            stdout.write(f'{table}\n')
+
+if __name__ == "__main__":
+    main()
