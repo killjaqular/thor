@@ -2,12 +2,12 @@
 """
 filename    : CreateDatabase.py
 author      : Adonay Pichardo
-description : Python script to populate Thor database with schema.
+description : Python script to populate Thor database with schema and data.
 """
 # <Document_Header End>
 
 # <Standard Imports Start>
-from sys import argv, stdin, stdout
+from sys import argv, stdout
 # <Standard Imports End>
 
 # <Internal Imports Start>
@@ -18,7 +18,6 @@ import mysql.connector
 # <External Imports End>
 
 # <Global Objects Start>
-credentials = {}
 # <Global Objects End>
 
 # <Classes Start>
@@ -26,28 +25,27 @@ credentials = {}
 
 # <Functions Start>
 ################################
-# Creates database
+# Creates empty database with no schema or data
 ################################
 def createDatabase(connection, database):
     try:
         cursor = connection.cursor()
 
         ################################
-        # Create the database ONLY if it does not exist.
+        # Create the database ONLY if it does NOT exist.
         # If the database already exists, STOP, contact all members and ensure that
         # you may delete it. This is meant to prevent anyone from just deleting/overwritting
         # a currently existing database
         ################################
         cursor.execute("CREATE DATABASE IF NOT EXISTS " + str(database))
         cursor.close()
-        connection.close()
-        print("Created database " + str(database))
+        stdout.write("Created database " + str(database))
 
         # Return True if the database was created
         return True
     except Exception as error:
         stdout.write(f'ERROR:_> FROM:_> createDatabase():_> {error}\n')
-        # Return False if the database was created
+        # Return False if the database was not created
         return False
 
 ################################
@@ -73,79 +71,98 @@ def buildInsertStatement(given_table, given_record):
     stdout.write(f'{complete_sql_statement}\n')
     return complete_sql_statement
 
+################################
+# Checks if CreateDatabase.py is being used correctly
+################################
+def checkCLI(argv):
+    if len(argv) < 3:
+            stdout.write(f'USAGE:_> python3 {argv[0]} <file used for credentials> <file used for ddl> <file with data>+\n\n')
+            stdout.write(f'REQUIRED - a file used for credentials should look like:\n')
+            stdout.write(f'host:###.###.###.###\n')
+            stdout.write(f'user:string for the username\n')
+            stdout.write(f'password:string for the password\n')
+            stdout.write(f'database:string for the database name\n\n')
+            stdout.write(f'REQUIRED - a file used for ddl should be in valid SQL.\n\n')
+            stdout.write(f'REQUIRED - each file with data needs to be a csv file.\n')
+            stdout.write(f'REQUIRED - One or more CSV file, must be the name of a table in the database\n')
+            exit()
+
+################################
+# Creates connection to the database server with provided credentials
+################################
+def connectToDataBase(credentials):
+    return mysql.connector.connect(host     = credentials['host'],
+                                   user     = credentials['user'],
+                                   password = credentials['password']
+                                   )
+
 def main():
     ################################
-    # 1. Verify the program has been given all required arguments
+    # Verify the program has been called correctly
     ################################
-    if len(argv) != 2:
-        stdout.write(f'USAGE:_> python3 {argv[0]} <file used for credentials>\n')
-        stdout.write(f'file used for credentials should look like:\n')
-        stdout.write(f'host    :###.###.###.###\n')
-        stdout.write(f'user    :string for the username\n')
-        stdout.write(f'password:string for the password\n')
-        stdout.write(f'database:string for the database name\n')
-        exit()
+    checkCLI(argv)
 
     ################################
-    # 2. Gather credential information
+    # Gather credential information
     ################################
     credentials_file = open(argv[1], 'r')
+    credentials = {} # Used for authorizing the usage of the database
 
+    # Read in credentialing information
     for line in credentials_file.readlines():
         key, value = line.rstrip().split(':')
         credentials[key] = value
+    credentials['database'], _ = argv[2].split(".")
 
     ################################
-    # 3. Connect to the database and create a cursor to write to database
+    # Connect to the database and create a cursor to write to database
     ################################
-    connection = mysql.connector.connect(host = credentials['host'],
-                                         user = credentials['user'],
-                                         password = credentials['password'],
-                                         database = credentials['database']
-                                         )
+    connection = connectToDataBase(credentials)
     cursor = connection.cursor()
 
     ################################
-    # 4. Create the database
+    # Create the database
     ################################
     createDatabase(connection, credentials['database'])
 
     ################################
-    # 5. Read in the csv
+    # Read in the Data Defining Language csv
     ################################
-    csv_data = open('Thor.ddl', 'r')
+    cursor.execute(open('Thor.ddl', 'r').read(), multi = True)
+    connection.commit()
 
     ################################
-    # 6. Create schema
+    # Open all CSV files passed in from Command Line Input
     ################################
-    csv_data = csv_data.read()
-    cursor.execute(str(ddl_statement), multi = True)
+    for every_csv_file in argv[2:]:
+        csv_file = open(every_csv_file, 'r')
+        all_insertions = '' # All insertions for a CSV file
+    
+        for line in csv_file.readlines():
+            all_insertions += buildInsertStatement(every_csv_file, line) + "\n"
+
+        # Close file after reading it
+        every_csv_file.close()
+
+        ################################
+        # Send all INSERT statements for current CSV file
+        ################################
+        cursor.execute(all_insertions, multi = True)
+
+        ################################
+        # Commit changes
+        ################################
+        cursor.commit()
 
     ################################
-    # 7. Create individual SQL INSERT statements
+    # Close connection
     ################################
-    for line in csv_data.readlines():
-        buildInsertStatement(line)
+    connection.close()
 
     ################################
-    # 8. Concatinate all INSERT statements
+    # Close cursor
     ################################
-
-    ################################
-    # 9. Send all INSERT statements
-    ################################
-
-    ################################
-    # 10. Commit changes
-    ################################
-
-    ################################
-    # 11. Close connection
-    ################################
-
-    ################################
-    # 12. Close cursor
-    ################################
+    cursor.close()
 
 # <Functions End>
 

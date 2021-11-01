@@ -1,6 +1,6 @@
 # <Document_Header Start>
 """
-filename : insert_csv_into_database.py # name of this file
+filename : InsertCSVIntoDatabase.py # name of this file
 author : Adonay Pichardo # name of original engineer
 date : 03-OCT-2021 # date of original commit
 
@@ -40,9 +40,9 @@ def insert_into_table(table_name, data_to_insert):
 
 def main():
     if len(argv) != 2:
-        stdout.write(f'USAGE: python3 insert_csv_into_database.py <path\\to\\csv\\file.csv>\n')
+        stdout.write(f'USAGE: python3 InsertCSVIntoDatabase.py <path\\to\\csv\\file.csv>\n')
         exit()
-
+ß
     ################################
     # Get locally stored database information
     ################################    
